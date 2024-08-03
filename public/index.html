@@ -11,6 +11,10 @@
 <div id="phaser-example" width="800" height="600"></div>
 <script language="JavaScript">
     class Example extends Phaser.Scene {
+        
+        pacRadius = 60;
+
+        
         preload() {
             this.load.setBaseURL('https://labs.phaser.io');
             this.load.image('sky', 'assets/skies/space3.png');
@@ -21,19 +25,68 @@
         create() {
             this.add.image(400, 300, 'sky');
 
+            //const shape = this.createRect();
+            const pg = this.createPacman(this.pacRadius);
+
+
             const particles = this.add.particles(0, 0, 'red', {
                 speed: 100,
                 scale: { start: 1, end: 0 },
                 blendMode: 'ADD'
             });
-
             const logo = this.physics.add.image(400, 100, 'logo');
-
             logo.setVelocity(100, 200);
             logo.setBounce(1, 1);
             logo.setCollideWorldBounds(true);
 
-            particles.startFollow(logo);
+            //particles.startFollow(shape);
+            
+        }
+        
+        createRect() {
+            const r1 = this.add.rectangle(200, 150, 148, 148, 0x6666ff);
+            this.physics.add.existing(r1);
+            r1.body.velocity.x = 100;
+            r1.body.velocity.y = 100;
+            r1.body.bounce.x = 1;
+            r1.body.bounce.y = 1;
+            r1.body.collideWorldBounds = true;
+            return r1;
+        }
+        
+        createPacman(radius) {
+
+            const pg = this.add.graphics();
+            this.physics.add.existing(pg);
+            pg.body.velocity.x = 100;
+            pg.body.velocity.y = 200;
+            pg.body.bounce.x = 1;
+            pg.body.bounce.y = 1;
+            pg.body.collideWorldBounds = true;
+            this.tweens.addCounter({
+                from: 0,
+                to: 30,
+                duration: 200,
+                yoyo: true,
+                repeat: -1,
+                onUpdate: function (tween)
+                {
+                    const t = tween.getValue();
+                    pg.clear();
+                    pg.fillStyle(0xffff00, 1);
+                    pg.slice(radius, radius, radius , Phaser.Math.DegToRad(330 + t), Phaser.Math.DegToRad(30 - t), true);
+                    pg.fillPath();
+                    // graphics.fillStyle(0x000000, 1);
+                    // graphics.fillEllipse(260, 180, 30, 90);
+                }
+            });
+            return pg;
+        }
+        
+        createDot() {
+            // graphics.fillStyle(0xffffff, 1);
+            // graphics.fillCircle(580, 300, 30);
+            // graphics.fillCircle(740, 300, 30);
         }
     }
 
