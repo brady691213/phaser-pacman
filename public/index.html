@@ -3,8 +3,8 @@
 <head>
     <title>Express</title>
     <link rel="stylesheet" href="/stylesheets/style.css">
-    <!--  <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>-->
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+      <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+<!--    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>-->
 
 </head>
 
@@ -18,28 +18,28 @@
             this.load.setBaseURL('https://labs.phaser.io');
             this.load.image('pic', 'assets/pics/forgotten-worlds.png');
             this.load.image('ball', 'assets/sprites/shinyball.png');
+
+            this.load.image('sky', 'assets/skies/space3.png');
+            this.load.image('logo', 'assets/sprites/phaser3-logo.png');
+            this.load.image('red', 'assets/particles/red.png');
         }
 
         create() {
-            //  This just injects an image into the div background, so you can see the transparency working.
-            const div = document.getElementById('phaser-example');
+            this.add.image(400, 300, 'sky');
 
-            div.style.background = 'url(assets/demoscene/multi-color-raster.png)';
-
-            console.log(this.sys.renderer);
-            console.log(this.cameras.main);
-
-            this.add.image(400, 600, 'pic').setOrigin(0.5, 1);
-
-            const ball = this.add.image(400, 100, 'ball');
-
-            this.tweens.add({
-                targets: ball,
-                y: 600,
-                ease: 'Sine.inOut',
-                yoyo: true,
-                repeat: -1
+            const particles = this.add.particles(0, 0, 'red', {
+                speed: 100,
+                scale: { start: 1, end: 0 },
+                blendMode: 'ADD'
             });
+
+            const logo = this.physics.add.image(400, 100, 'logo');
+
+            logo.setVelocity(100, 200);
+            logo.setBounce(1, 1);
+            logo.setCollideWorldBounds(true);
+
+            particles.startFollow(logo);
         }
     }
 
@@ -51,7 +51,13 @@
         backgroundColor: 'rgba(100,0,0,0)',
         transparent: true,
         clearBeforeRender: false,
-        scene: Example
+        scene: Example,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 200 }
+            }
+        }
     };
 
     const game = new Phaser.Game(config);
