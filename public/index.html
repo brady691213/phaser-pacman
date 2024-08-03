@@ -3,22 +3,16 @@
 <head>
     <title>Express</title>
     <link rel="stylesheet" href="/stylesheets/style.css">
-      <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
-<!--    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>-->
+<!--      <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
 
 </head>
-
 <body>
-<h1>Express</h1>
-<p>Welcome to Express</p>
-<div id="phaser-example"><canvas width="800" height="600"></canvas></div>
+<div id="phaser-example" width="800" height="600"></div>
 <script language="JavaScript">
     class Example extends Phaser.Scene {
         preload() {
             this.load.setBaseURL('https://labs.phaser.io');
-            this.load.image('pic', 'assets/pics/forgotten-worlds.png');
-            this.load.image('ball', 'assets/sprites/shinyball.png');
-
             this.load.image('sky', 'assets/skies/space3.png');
             this.load.image('logo', 'assets/sprites/phaser3-logo.png');
             this.load.image('red', 'assets/particles/red.png');
@@ -49,8 +43,6 @@
         width: 800,
         height: 600,
         backgroundColor: 'rgba(100,0,0,0)',
-        transparent: true,
-        clearBeforeRender: false,
         scene: Example,
         physics: {
             default: 'arcade',
