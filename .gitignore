@@ -2907,3 +2907,4 @@
 /node_modules/nodemon/package.json
 /node_modules/nodemon/README.md
 /node_modules/.modules.yaml
+/public/javascripts/bundle.js

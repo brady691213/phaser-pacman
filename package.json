@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./app.js",
-    "devstart": "nodemon ./app.js",
+    "start": "http-server",
+    "devstart": "browserify src/loader.js -o public/javascripts/bundle.js && pnpm run start",
     "serverstart": "DEBUG=pacman:* npm run devstart"
   },
   "dependencies": {
