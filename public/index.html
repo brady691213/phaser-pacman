@@ -3,31 +3,139 @@
 <head>
     <title>Pacman</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
-    <script src="./javascripts/bundle.js"></script>
-
 </head>
 <body>
 <div id="phaser-example" width="800" height="600"></div>
+
 <script language="JavaScript">
     
-    // const ps = new PacmanTileScene();
-    //
-    // const config = {
-    //     type: Phaser.AUTO,
-    //     parent: 'phaser-example',
-    //     width: 800,
-    //     height: 600,
-    //     backgroundColor: 'rgba(100,0,0,0)',
-    //     scene: ps,
-    //     physics: {
-    //         default: 'arcade',
-    //         arcade: {
-    //             gravity: {y: 200}
-    //         }
-    //     }
-    // };
-    // const game = new Phaser.Game(config);
+    class PacmanTileScene extends Phaser.Scene {
 
+        cellSize = 32;
+        currCell = { x: 1, y: 1  };
+        pacRadius = this.cellSize / 2 - 2;
+        velocity = 3;
+        
+
+        pacPos = { x: this.currCell.x * this.cellSize + (this.cellSize / 2), 
+            y: this.currCell.y * this.cellSize + (this.cellSize / 2) };
+        layer;
+       
+        pacDir = "right"; 
+        getPacDelta() {
+            switch (this.pacDir) {
+                case "right":
+                    return { x: +1, y: 0 };
+                case "left":
+                    return { x: -1, y: 0 };
+                case "down":
+                    return { x: 0, y: +3 };
+                case "up":
+                    return { x: 0, y: -3 };
+            }
+        }
+        
+        tryMove = () => {
+            const d = this.getPacDelta();
+            const co = this.cellSize * d.x;
+            const pad = 2 * d.x;
+            const tile = this.layer.getTileAtWorldXY(this.pacPos.x + co + this.pacRadius + pad, this.pacPos.y, true);
+            if (tile.index !== 2)
+            {
+                const d = this.getPacDelta();
+                this.pacPos.x += d.x * this.velocity;
+            }
+        }
+
+        preload() {
+            this.load.setBaseURL('https://labs.phaser.io');
+            this.load.image('tiles', 'https://labs.phaser.io/assets/tilemaps/tiles/drawtiles-spaced.png');
+            this.load.image('car', 'https://labs.phaser.io/assets/sprites/car90.png');
+            this.load.tilemapCSV('map', 'https://labs.phaser.io/assets/tilemaps/csv/grid.csv');
+            this.load.image('red', 'assets/particles/red.png');
+        }
+
+        create() {
+            const map = this.make.tilemap({ key: 'map', tileWidth: this.cellSize, tileHeight: this.cellSize });
+            const tileset = map.addTilesetImage('tiles', null, this.cellSize, this.cellSize, 1, 2);
+            this.layer = map.createLayer(0, tileset, 0, 0);
+
+            this.tweens.addCounter({
+                from: 0,
+                to: 30,
+                duration: 200,
+                yoyo: true,
+                repeat: -1,
+                onUpdate: () => {
+                    //this.tryRight();
+                    //const d = this.getPacDelta();
+                    // this.pacPos.x += d.x;
+                    // this.pacPos.y += d.y;
+                }
+            });
+
+            
+            this.input.keyboard.on('keydown-D', event =>
+            {
+                this.pacDir = "right";
+                this.tryMove();
+            });
+
+            this.input.keyboard.on('keydown-A', event =>
+            {
+                this.pacDir = "left";
+                this.tryMove();
+            });
+            
+            this.pacman = this.createPacman(this.pacPos, this.pacRadius);
+        }
+
+        createPacman = (pos, radius) => {
+            
+            const pg = this.add.graphics();
+            this.tweens.addCounter({
+                from: 0,
+                to: 30,
+                duration: 200,
+                yoyo: true,
+                repeat: -1,
+                onUpdate: function (tween)
+                {
+                    const t = tween.getValue();
+                    pg.clear();
+                    pg.fillStyle(0xffff00, 1);
+                    pg.slice(pos.x, pos.y, radius, Phaser.Math.DegToRad(330 + t), Phaser.Math.DegToRad(30 - t), true);
+                    pg.fillPath();
+                }
+            });
+            return pg;
+        }
+
+        
+        
+        createDot() {
+            // graphics.fillStyle(0xffffff, 1);
+            // graphics.fillCircle(580, 300, 30);
+            // graphics.fillCircle(740, 300, 30);
+        }
+    }
+
+    const config = {
+        type: Phaser.AUTO,
+        parent: 'phaser-example',
+        width: 800,
+        height: 600,
+        backgroundColor: 'rgba(100,0,0,0)',
+        scene: PacmanTileScene,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: {y: 200}
+            }
+        }
+    };
+    const game = new Phaser.Game(config);
+    
 </script>
 
 </body>
