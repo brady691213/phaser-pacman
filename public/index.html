@@ -35,15 +35,15 @@
             }
         }
         
-        tryMove = () => {
+        movH = () => {
             const d = this.getPacDelta();
-            const co = this.cellSize * d.x;
-            const pad = 2 * d.x;
-            const tile = this.layer.getTileAtWorldXY(this.pacPos.x + co + this.pacRadius + pad, this.pacPos.y, true);
+            const xoff = (this.pacRadius + 2) * d.x;
+            const yoff = (this.pacRadius + 2) * d.y;
+            const tile = this.layer.getTileAtWorldXY(this.pacPos.x + xoff, this.pacPos.y + yoff, true);
             if (tile.index !== 2)
             {
-                const d = this.getPacDelta();
                 this.pacPos.x += d.x * this.velocity;
+                this.pacPos.y += d.y * this.velocity;
             }
         }
 
@@ -78,13 +78,13 @@
             this.input.keyboard.on('keydown-D', event =>
             {
                 this.pacDir = "right";
-                this.tryMove();
+                this.movH();
             });
 
             this.input.keyboard.on('keydown-A', event =>
             {
                 this.pacDir = "left";
-                this.tryMove();
+                this.movH();
             });
             
             this.pacman = this.createPacman(this.pacPos, this.pacRadius);
