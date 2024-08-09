@@ -8,42 +8,32 @@
 <div id="phaser-example" width="800" height="600"></div>
 
 <script language="JavaScript">
+
+    Function.prototype.method = function (name, func) {
+        this.prototype[name] = func;
+        return this;
+    };
     
     class PacmanTileScene extends Phaser.Scene {
 
         cellSize = 32;
         currCell = { x: 1, y: 1  };
+        
         pacRadius = this.cellSize / 2 - 2;
         velocity = 3;
-        
 
         pacPos = { x: this.currCell.x * this.cellSize + (this.cellSize / 2), 
             y: this.currCell.y * this.cellSize + (this.cellSize / 2) };
         layer;
-       
-        pacDir = "right"; 
-        getPacDelta() {
-            switch (this.pacDir) {
-                case "right":
-                    return { x: +1, y: 0 };
-                case "left":
-                    return { x: -1, y: 0 };
-                case "down":
-                    return { x: 0, y: +3 };
-                case "up":
-                    return { x: 0, y: -3 };
-            }
-        }
         
-        movH = () => {
-            const d = this.getPacDelta();
-            const xoff = (this.pacRadius + 2) * d.x;
-            const yoff = (this.pacRadius + 2) * d.y;
+        movPac = () => {
+            const xoff = (this.pacRadius + 2) * this.pacDelta.x + this.pacDelta.x;
+            const yoff = (this.pacRadius + 2) * this.pacDelta.y + this.pacDelta.y;
             const tile = this.layer.getTileAtWorldXY(this.pacPos.x + xoff, this.pacPos.y + yoff, true);
             if (tile.index !== 2)
             {
-                this.pacPos.x += d.x * this.velocity;
-                this.pacPos.y += d.y * this.velocity;
+                this.pacPos.x += this.pacDelta.x * this.velocity;
+                this.pacPos.y += this.pacDelta.y * this.velocity;
             }
         }
 
@@ -68,23 +58,34 @@
                 repeat: -1,
                 onUpdate: () => {
                     //this.tryRight();
-                    //const d = this.getPacDelta();
+                    //const d = this.pacDelta();
                     // this.pacPos.x += d.x;
                     // this.pacPos.y += d.y;
                 }
             });
 
+            this.input.keyboard.on('keydown-S', event =>
+            {
+                this.pacDelta = { x: 0, y: +1 };
+                this.movPac();
+            });
+
+            this.input.keyboard.on('keydown-W', event =>
+            {
+                this.pacDelta = { x: 0, y: -1 };
+                this.movPac();
+            });
             
             this.input.keyboard.on('keydown-D', event =>
             {
-                this.pacDir = "right";
-                this.movH();
+                this.pacDelta = { x: +1, y: 0 };
+                this.movPac();
             });
 
             this.input.keyboard.on('keydown-A', event =>
             {
-                this.pacDir = "left";
-                this.movH();
+                this.pacDelta = { x: -1, y: 0 };
+                this.movPac();
             });
             
             this.pacman = this.createPacman(this.pacPos, this.pacRadius);
